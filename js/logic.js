@@ -1,7 +1,7 @@
 var scene, camera, renderer, controls, composer, dotScreenShade;
 
 var USE_SHADERS = true;
-var CLEAR       = true;
+var CLEAR       = false;
 
 init();
 animate();
@@ -53,16 +53,21 @@ function init() {
     // post
     composer = new THREE.EffectComposer( renderer );
 
-    var scenePass = new THREE.RenderPass( scene, camera );
+    var scenePass  = new THREE.RenderPass( scene, camera );
     composer.addPass( scenePass );
 
-    dotScreenShade = new THREE.ShaderPass( THREE.DotScreenShader );
-    composer.addPass( dotScreenShade );
+    // fancy shaders
 
-    colShad     = new THREE.ShaderPass( THREE.ColorifyShader );
-    composer.addPass( colShad );
+    // dotScreenShade  = last = new THREE.ShaderPass( THREE.DotScreenShader );
+    // composer.addPass( last );
 
-    colShad.renderToScreen            = true;
+    // colShad         = last = new THREE.ShaderPass( THREE.ColorifyShader );
+    // composer.addPass( last );
+
+    dimShad         = last = new THREE.ShaderPass( THREE.DimShader );
+    composer.addPass( last );
+
+    last.renderToScreen            = true;
 }
 
 function animate() {
@@ -70,8 +75,8 @@ function animate() {
 
 	if ( USE_SHADERS ) {
 		var rad = 100 + Math.random() * 300;
-		dotScreenShade.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
-		colShad.uniforms.color.value = new THREE.Color( 0xffffff * Math.random() );
+		// dotScreenShade.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
+		// colShad.uniforms.color.value = new THREE.Color( 0xffffff * Math.random() );
 		composer.render();
 	} else {
 		renderer.render( scene, camera );
