@@ -36,7 +36,7 @@ THREE.DimShader = {
 
 		"void main() {",
 
-			"vec4 texel = texture2D( prevTDiffuse, vUv );",
+			"highp vec4 texel = texture2D( prevTDiffuse, vUv );",
 
   			"gl_FragColor = texel * 0.995;",
 
