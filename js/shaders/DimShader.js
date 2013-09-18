@@ -38,7 +38,7 @@ THREE.DimShader = {
 
 			"vec4 texel = texture2D( prevTDiffuse, vUv );",
 
-  			"gl_FragColor = vec4(texel.x * 0.8, texel.y * 0.4, texel.z * 0.8, texel.w * 0.8);",
+  			"gl_FragColor = texel * 0.995;",
 
 		"}"
 
