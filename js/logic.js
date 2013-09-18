@@ -6,6 +6,9 @@ var CLEAR       = false;
 init();
 animate();
 
+var fadeRate    = [ 0, 0.75, 0.95, 0.995, 0.9995 ];
+var currentFade =            2;
+
 function init() {
 	var WIDTH, HEIGHT;
 
@@ -96,6 +99,20 @@ function onKeyDown( event ) {
 	switch ( event.keyCode ) {
 		case 32:
 			USE_SHADERS = !USE_SHADERS;
+			break;
+		case 33:
+			currentFade++;
+			if ( currentFade >= fadeRate.length ) {
+				currentFade = fadeRate.length - 1;
+			}
+			shDim.uniforms[ 'scaleRate' ].value = fadeRate[ currentFade ];
+			break;
+		case 34:
+			currentFade--;
+			if ( currentFade < 0 ) {
+				currentFade = 0;
+			}
+			shDim.uniforms[ 'scaleRate' ].value = fadeRate[ currentFade ];
 			break;
 	}
 }

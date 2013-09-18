@@ -10,6 +10,7 @@ THREE.DimShader = {
 
 		"tDiffuse"     : { type: "t", value: null },
 		"prevTDiffuse" : { type: "t", value: null },
+		"scaleRate"    : { type: "f", value: 0.95 }
 
 	},
 
@@ -33,12 +34,12 @@ THREE.DimShader = {
 
 		"uniform sampler2D tDiffuse;",
 		"uniform sampler2D prevTDiffuse;",
+		"uniform float scaleRate;",
 
 		"void main() {",
 
-			"highp vec4 texel = texture2D( prevTDiffuse, vUv );",
-
-  			"gl_FragColor = texel * 0.995;",
+			"vec4 texel = texture2D( prevTDiffuse, vUv );",
+  			"gl_FragColor = vec4( texel.rgb * scaleRate, texel.a );",
 
 		"}"
 
