@@ -1,7 +1,7 @@
 var scene, camera, renderer, controls, composer, dotScreenShade;
 
 var USE_SHADERS = true;
-var CLEAR       = false;
+var CLEAR       = true;
 
 init();
 animate();
@@ -22,23 +22,27 @@ function init() {
 
 	document.body.appendChild( renderer.domElement );
 
-	camera = new THREE.PerspectiveCamera( 45, WIDTH/HEIGHT, 0.1, 20000 );
-	camera.position.set( 0, 4, 0 );
-	scene.add( camera );
-
 	window.addEventListener( 'resize', function () {
 		var 
 		WIDTH  = window.innerWidth,
 		HEIGHT = window.innerHeight;
 
 		renderer.setSize( WIDTH, HEIGHT );
+
 		camera.aspect = WIDTH / HEIGHT;
 		camera.updateProjectionMatrix();
 	});
 
+	// --- LIGHTS ---------
 	var light0 = new THREE.HemisphereLight( 0xd0d0d0, 0x303030 );
 	scene.add( light0 );
 
+	// --- CAMERA ---------
+	camera = new THREE.PerspectiveCamera( 45, WIDTH/HEIGHT, 0.1, 20000 );
+	camera.position.set( 0, 4, 0 );
+	scene.add( camera );
+
+	// --- GEOM -----------
 	var loader = new THREE.JSONLoader();
 	loader.load ( "models/dodeca-wire.js", function( geo ) {
 		var material = new THREE.MeshLambertMaterial({ color : 0xffffff, shading : THREE.FlatShading }),
@@ -47,16 +51,15 @@ function init() {
 	   	scene.add(mesh);
 	});
 
+	// --- ACTION ----------
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.noPan = true;
 
-    // post
-    composer = new THREE.EffectComposer( renderer );
+    // --- POST ------------
+    composer  = new THREE.EffectComposer( renderer );
 
     var scenePass  = new THREE.RenderPass( scene, camera );
     composer.addPass( scenePass );
-
-    // fancy shaders
 
     // dotScreenShade  = last = new THREE.ShaderPass( THREE.DotScreenShader );
     // composer.addPass( last );
@@ -67,7 +70,13 @@ function init() {
     dimShad         = last = new THREE.ShaderPass( THREE.DimShader );
     composer.addPass( last );
 
-    last.renderToScreen            = true;
+    last.renderToScreen = true;
+
+    // seed first with readBuffer use write for the rest
+    dimShad.enabled = false;
+    composer.render();
+    dimShad.uniforms[ 'prevTDiffuse' ].value = composer.readBuffer;
+    dimShad.enabled = true;
 }
 
 function animate() {
@@ -77,6 +86,10 @@ function animate() {
 		var rad = 100 + Math.random() * 300;
 		// dotScreenShade.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
 		// colShad.uniforms.color.value = new THREE.Color( 0xffffff * Math.random() );
+		dimShad.renderToScreen = false;
+		composer.render();
+		dimShad.uniforms[ 'prevTDiffuse' ].value    = composer.writeBuffer;
+		dimShad.renderToScreen = true;
 		composer.render();
 	} else {
 		renderer.render( scene, camera );
