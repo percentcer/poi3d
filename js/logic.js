@@ -77,6 +77,7 @@ function init() {
 	composer.addPass( shCopy );
 
 	shCopy.renderToScreen = true;
+	renderer.setClearColor(  0xff00ff, 1 );
 }
 
 function animate() {
