@@ -7,7 +7,7 @@ init();
 animate();
 
 var fadeRate    = [ 0, 0.75, 0.95, 0.995, 0.9995 ];
-var currentFade =            2;
+var currentFade =                  3;
 
 function init() {
 	var WIDTH, HEIGHT;

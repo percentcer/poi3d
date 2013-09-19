@@ -10,7 +10,7 @@ THREE.DimShader = {
 
 		"tDiffuse"     : { type: "t", value: null },
 		"prevTDiffuse" : { type: "t", value: null },
-		"scaleRate"    : { type: "f", value: 0.95 }
+		"scaleRate"    : { type: "f", value: 0.995 }
 
 	},
 
