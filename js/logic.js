@@ -1,13 +1,22 @@
-var scene, camera, renderer, controls, composer, dotScreenShade;
+var 
+scene, camera, renderer, composer, controls,
+shColor, shDim, shDot
+;
 
 var USE_SHADERS = true;
 var CLEAR       = false;
 
-init();
-animate();
-
 var fadeRate    = [ 0, 0.75, 0.85, 0.95, 0.995 ];
 var currentFade =                  3;
+
+var brightColors = [
+	0xff0000,
+	0x00ff00,
+	0x0000ff,
+	0xffff00,
+	0xff00ff,
+	0x00ffff
+];
 
 function init() {
 	var WIDTH, HEIGHT;
@@ -85,14 +94,6 @@ function animate() {
 
 	if ( USE_SHADERS ) {
 		var rad = 100 + Math.random() * 300;
-		var brightColors = [
-			0xff0000,
-			0x00ff00,
-			0x0000ff,
-			0xffff00,
-			0xff00ff,
-			0x00ffff
-		];
 		var randColor = new THREE.Color( brightColors[Math.ceil(Math.random() * 6)] );
 
 		shDot.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
@@ -130,3 +131,6 @@ function onKeyDown( event ) {
 }
 
 window.addEventListener( 'keydown', onKeyDown, false );
+
+init();
+animate();
