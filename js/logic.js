@@ -1,22 +1,23 @@
 var 
 scene, camera, renderer, composer, controls,
 shColor, shDim, shDot
-;
 
-var USE_SHADERS = true;
-var CLEAR       = false;
+USE_SHADERS = true,
+CLEAR       = false,
 
-var fadeRate    = [ 0, 0.75, 0.85, 0.95, 0.995 ];
-var currentFade =                  3;
+fadeRate    = [ 0, 0.75, 0.85, 0.95, 0.995 ],
+currentFade =                  3,
 
-var brightColors = [
+brightColors = [
 	0xff0000,
 	0x00ff00,
 	0x0000ff,
 	0xffff00,
 	0xff00ff,
 	0x00ffff
-];
+]
+
+;
 
 function init() {
 	var WIDTH, HEIGHT;
