@@ -44,11 +44,11 @@ THREE.DimShader = {
 
 			"if ( all( equal( iold.rgb, inew.rgb ) ) ) {",
 
-				"return ( vec4( ivec4( inew.rgb - ivec3(2), inew.a ) ) / 255.0 ) * vec4(1.0, 0.0, 0.0, 1.0);",
+				"return vec4( ivec4( inew.rgb - ivec3(1), inew.a ) ) / 255.0;",
 
 			"} else {",
 
-				"return new * vec4(0.0, 1.0, 0.0, 1.0);",
+				"return new;",
 
 			"}",
 

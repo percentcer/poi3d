@@ -6,8 +6,8 @@ var CLEAR       = false;
 init();
 animate();
 
-var fadeRate    = [ 0, 0.75, 0.95, 0.995, 0.9995 ];
-var currentFade =            2;
+var fadeRate    = [ 0, 0.75, 0.85, 0.95, 0.995 ];
+var currentFade =                  3;
 
 function init() {
 	var WIDTH, HEIGHT;
@@ -37,7 +37,8 @@ function init() {
 	});
 
 	// --- LIGHTS ---------
-	var light0 = new THREE.AmbientLight( 0xffffff );//HemisphereLight( 0xd0d0d0, 0x303030 );
+	light0 = new THREE.AmbientLight( 0xffffff );
+	// light0 = new THREE.HemisphereLight( 0xd0d0d0, 0x303030 );
 	scene.add( light0 );
 
 	// --- CAMERA ---------
@@ -67,17 +68,16 @@ function init() {
 	var scenePass  = new THREE.RenderPass( scene, camera );
 	composer.addPass( scenePass );
 
-	// dotScreenShade  = last = new THREE.ShaderPass( THREE.DotScreenShader );
-	// composer.addPass( last );
+	shDot = new THREE.ShaderPass( THREE.DotScreenShader );
+	composer.addPass( shDot );
 
-	// colShad         = last = new THREE.ShaderPass( THREE.ColorifyShader );
-	// composer.addPass( last );
+	shColor = new THREE.ShaderPass( THREE.ColorifyShader );
+	composer.addPass( shColor );
 
 	var shCopy = new THREE.ShaderPass( THREE.CopyShader );
 	composer.addPass( shCopy );
 
 	shCopy.renderToScreen = true;
-	renderer.setClearColor(  0xff00ff, 1 );
 }
 
 function animate() {
@@ -85,8 +85,19 @@ function animate() {
 
 	if ( USE_SHADERS ) {
 		var rad = 100 + Math.random() * 300;
-		// dotScreenShade.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
-		// colShad.uniforms.color.value = new THREE.Color( 0xffffff * Math.random() );
+		var brightColors = [
+			0xff0000,
+			0x00ff00,
+			0x0000ff,
+			0xffff00,
+			0xff00ff,
+			0x00ffff
+		];
+		var randColor = new THREE.Color( brightColors[Math.ceil(Math.random() * 6)] );
+
+		shDot.uniforms[ 'tSize' ].value = new THREE.Vector2( rad, rad );
+		shColor.uniforms.color.value = randColor;
+		// light0.color = randColor;
 		shDim.uniforms[ 'prevTDiffuse' ].value = composer.writeBuffer;
 		composer.render();
 	} else {
