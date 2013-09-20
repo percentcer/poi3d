@@ -30,6 +30,7 @@ function init() {
 	});
 
 	renderer.autoClearColor = CLEAR;
+	renderer.setClearColor( 0xff00ff, 1);
 	renderer.setSize( WIDTH, HEIGHT );
 
 	document.body.appendChild( renderer.domElement );
@@ -112,6 +113,8 @@ function onKeyDown( event ) {
 	switch ( event.keyCode ) {
 		case 32:
 			USE_SHADERS = !USE_SHADERS;
+			renderer.preserveDrawingBuffer = !renderer.preserveDrawingBuffer;
+			renderer.autoClearColor = !renderer.autoClearColor;
 			break;
 		case 33:
 			currentFade++;
