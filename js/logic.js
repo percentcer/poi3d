@@ -1,6 +1,6 @@
 var 
 scene, camera, renderer, composer, controls,
-shColor, shDim, shDot
+shColor, shDim, shDot, shVert
 
 USE_SHADERS = true,
 CLEAR       = false,
@@ -73,8 +73,10 @@ function init() {
 	// --- POST ------------
 	composer  = new THREE.EffectComposer( renderer );
 
+
 	shDim = new THREE.ShaderPass( THREE.DimShader );
 	composer.addPass( shDim );
+
 
 	var scenePass  = new THREE.RenderPass( scene, camera );
 	composer.addPass( scenePass );
@@ -84,6 +86,9 @@ function init() {
 
 	shColor = new THREE.ShaderPass( THREE.ColorifyShader );
 	composer.addPass( shColor );
+
+	shVert = new THREE.ShaderPass( THREE.VertexNoiseShader );
+	composer.addPass( shVert );
 
 	var shCopy = new THREE.ShaderPass( THREE.CopyShader );
 	composer.addPass( shCopy );
@@ -102,6 +107,7 @@ function animate() {
 		shColor.uniforms.color.value = randColor;
 		// light0.color = randColor;
 		shDim.uniforms[ 'prevTDiffuse' ].value = composer.writeBuffer;
+		shVert.uniforms[ 'noise' ].value = Math.random();
 		composer.render();
 	} else {
 		renderer.render( scene, camera );
