@@ -1,6 +1,6 @@
 var 
 scene, camera, renderer, composer, controls,
-shColor, shDim, shDot, shVert
+shColor, shDim, shDot
 
 USE_SHADERS = true,
 CLEAR       = false,
@@ -60,7 +60,45 @@ function init() {
 	// --- GEOM -----------
 	var loader = new THREE.JSONLoader();
 	loader.load ( "models/dodeca-wire.js", function( geo ) {
-		var material = new THREE.MeshLambertMaterial({ color : 0xffffff, shading : THREE.FlatShading }),
+		var material = new THREE.ShaderMaterial({
+				uniforms : {
+					"tDiffuse"                 : { type: "t", value: null },
+					"noise"                    : { type: "f", value: Math.random() }
+				},
+
+				vertexShader : "\
+					varying vec2 vUv;\
+					uniform float noise;\
+					\
+					float prevNoise = noise;\
+					\
+					float _rand( vec2 co ) {\
+						return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);\
+					}\
+					\
+			        float rand() {\
+			            prevNoise = _rand( vec2( prevNoise ) );\
+			            return prevNoise;\
+			        }\
+			        \
+					void main() {\
+						vUv = uv;\
+			            vec3 noisyOffset = vec3( rand(), rand(), rand() ) / 4.0;\
+						gl_Position = projectionMatrix * modelViewMatrix * vec4( position + 0.0, 1.0 );\
+					}",
+
+				fragmentShader : "\
+					uniform sampler2D tDiffuse;\
+					varying vec2 vUv;\
+					void main() {\
+						gl_FragColor = texture2D( tDiffuse, vUv );\
+					}",
+
+				shading : THREE.FlatShading,
+				color   : 0xffffff,
+				vertexColors : THREE.VertexColors
+			}),
+
 			mesh     = new THREE.Mesh( geo, material );
 
 		scene.add(mesh);
@@ -73,10 +111,8 @@ function init() {
 	// --- POST ------------
 	composer  = new THREE.EffectComposer( renderer );
 
-
 	shDim = new THREE.ShaderPass( THREE.DimShader );
 	composer.addPass( shDim );
-
 
 	var scenePass  = new THREE.RenderPass( scene, camera );
 	composer.addPass( scenePass );
@@ -86,9 +122,6 @@ function init() {
 
 	shColor = new THREE.ShaderPass( THREE.ColorifyShader );
 	composer.addPass( shColor );
-
-	shVert = new THREE.ShaderPass( THREE.VertexNoiseShader );
-	composer.addPass( shVert );
 
 	var shCopy = new THREE.ShaderPass( THREE.CopyShader );
 	composer.addPass( shCopy );
@@ -107,7 +140,6 @@ function animate() {
 		shColor.uniforms.color.value = randColor;
 		// light0.color = randColor;
 		shDim.uniforms[ 'prevTDiffuse' ].value = composer.writeBuffer;
-		shVert.uniforms[ 'noise' ].value = Math.random();
 		composer.render();
 	} else {
 		renderer.render( scene, camera );

@@ -21,17 +21,26 @@ THREE.VertexNoiseShader = {
 		"uniform float ry;",
 		"uniform float noise;",
 
-		"float rand( vec2 co ) {",
+        "float prevNoise = noise;",
+
+		"float _rand( vec2 co ) {",
 
 			"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
 
 		"}",
 
+        "float rand() {",
+            "prevNoise = _rand( vec2( prevNoise ) );",
+            "return prevNoise;",
+        "}",
+
 		"void main() {",
 
 			"vUv = uv;",
 
-			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position * noise, 1.0 );",
+            "vec3 noisyOffset = vec3( rand(), rand(), rand() ) / 4.0;",
+
+			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position + noisyOffset, 1.0 );",
 
 		"}"
 
